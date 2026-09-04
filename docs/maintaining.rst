@@ -3,7 +3,7 @@
 Maintaining the Tap
 ===================
 
-This document covers how the tap is structured and how formulae are updated.
+This document covers how the tap is structured and how casks are updated.
 
 Repository Layout
 -----------------
@@ -11,8 +11,8 @@ Repository Layout
 .. code-block:: text
 
     homebrew-tap/
-      Formula/
-        bartleby.rb      # Homebrew formula for the bartleby CLI
+      Casks/
+        bartleby.rb      # generated cask for the bartleby CLI
       docs/
         index.rst
         usage.rst
@@ -20,78 +20,98 @@ Repository Layout
 
 Homebrew requires the repository to be named ``homebrew-tap`` (the
 ``homebrew-`` prefix is how ``brew tap neuronsphere/tap`` resolves to
-``neuronsphere/homebrew-tap``). Formulae live under ``Formula/``.
+``neuronsphere/homebrew-tap``). Casks live under ``Casks/``.
 
-How Formulae Are Updated
--------------------------
+Casks, Not Formulae
+-------------------
 
-Formulae in this tap are updated **automatically** by GoReleaser as part of
-each tool's release pipeline. When a new version of ``bartleby`` is tagged
-and released:
+These tools ship as **casks**. A Homebrew formula is meant to build software
+from source; a cask installs a pre-built artifact. GoReleaser used to generate
+formulae that simply unpacked a downloaded binary, and it deprecated that in
+favour of casks — ``brews`` in a ``.goreleaser.yaml`` is a dead end.
 
-1. GoReleaser builds platform-specific tarballs and publishes them to the
-   tool's GitHub Releases page.
+The practical consequence: **casks are macOS-only.** Linux users install from
+the release tarballs instead. If a tool ever needs to be installable through
+Homebrew on Linux, it needs a real formula that builds from source, which is a
+different piece of work.
 
-2. GoReleaser computes the sha256 checksum of each tarball.
-
-3. GoReleaser pushes an updated ``Formula/bartleby.rb`` to this repository
-   with the new version, download URLs, and checksums.
-
-No manual edits to the formula are required for routine releases. The
-GoReleaser configuration that drives this lives in the source repository
-(e.g., ``.goreleaser.yaml`` in ``hmd-cli-bartleby``).
-
-Adding a New Formula
+How Casks Are Updated
 ---------------------
+
+Casks in this tap are written **automatically** by GoReleaser as part of each
+tool's release. When a new version is tagged:
+
+1. GoReleaser cross-compiles and publishes tarballs to the tool's GitHub
+   Releases page.
+
+2. GoReleaser computes each tarball's sha256.
+
+3. GoReleaser commits an updated ``Casks/<tool>.rb`` to this repository with
+   the new version, URLs, and checksums.
+
+The files carry a ``DO NOT EDIT`` header for that reason — the next release
+overwrites them. To change something permanently, change the
+``homebrew_casks`` section in the source repository's ``.goreleaser.yaml``.
+
+Unsigned Binaries and Gatekeeper
+--------------------------------
+
+The binaries are not signed or notarized, so macOS quarantines them and
+Gatekeeper refuses to run them. Each cask therefore carries a ``postflight``
+hook that clears the quarantine attribute:
+
+.. code-block:: ruby
+
+    postflight do
+      if OS.mac?
+        system_command "/usr/bin/xattr", args: ["-dr", "com.apple.quarantine", "#{staged_path}/bartleby"]
+      end
+    end
+
+Without it, ``brew install`` succeeds and the tool dies on first run. This
+comes from ``hooks.post.install`` in the GoReleaser config. Signing and
+notarizing the binaries would remove the need for it.
+
+Adding a New Cask
+-----------------
 
 To distribute a new tool through this tap:
 
-1. Add a ``brews`` section to the tool's ``.goreleaser.yaml`` pointing at
-   this repository:
+1. Add a ``homebrew_casks`` section to the tool's ``.goreleaser.yaml`` pointing
+   at this repository:
 
    .. code-block:: yaml
 
-       brews:
+       homebrew_casks:
          - repository:
              owner: neuronsphere
              name: homebrew-tap
-           directory: Formula
+           directory: Casks
            homepage: https://github.com/neuronsphere/<repo>
            description: "Short description of the tool"
+           url:
+             verified: github.com/neuronsphere/<repo>
 
-2. Ensure the release workflow has a ``HOMEBREW_TAP_GITHUB_TOKEN`` secret
-   with ``repo`` scope on ``neuronsphere/homebrew-tap``.
+2. Give the release workflow a ``HOMEBREW_TAP_GITHUB_TOKEN`` with write access
+   to ``neuronsphere/homebrew-tap`` (see below).
 
-3. Tag and release. GoReleaser will create the new formula file
-   automatically.
+3. Tag and release. GoReleaser creates the cask file.
 
-Manual Formula Edits
----------------------
-
-If you need to adjust a formula outside of the automated pipeline (for
-example, adding a ``depends_on`` or changing the ``caveats`` text):
-
-1. Edit the ``.rb`` file under ``Formula/``.
-2. Test locally:
-
-   .. code-block:: bash
-
-       brew install --build-from-source Formula/bartleby.rb
-
-3. Commit and push. The next automated release will overwrite the file, so
-   also update the corresponding ``brews`` section in the source
-   repository's ``.goreleaser.yaml`` to keep the change permanent.
+Also set ``force_token: github`` in the config. GoReleaser chooses its release
+provider from whichever token it finds in the environment, so a ``GITLAB_TOKEN``
+exported for unrelated work is enough to make it treat the project as a GitLab
+one and generate casks pointing at ``gitlab.com`` URLs that do not exist.
 
 Authentication
 --------------
 
-GoReleaser authenticates to this repository using a GitHub PAT stored as
-``HOMEBREW_TAP_GITHUB_TOKEN`` in each source repository's secrets. This
-token needs:
+GoReleaser authenticates to this repository with a GitHub token supplied as
+``HOMEBREW_TAP_GITHUB_TOKEN``. In CI that comes from a repository secret
+(``HOMEBREW_TAP_TOKEN``) in each source repository; the built-in
+``GITHUB_TOKEN`` cannot be used, because it has no access outside the
+repository it runs in.
 
-- ``repo`` scope (full control of private repositories) if this tap is
-  private
-- ``public_repo`` scope if this tap is public
-
-Rotate the token periodically and update the secret in each source
-repository that publishes to this tap.
+The token needs ``repo`` scope while this tap is private, or ``public_repo`` if
+it is public. A fine-grained token needs Contents: write on
+``neuronsphere/homebrew-tap``. Rotate it periodically and update the secret in
+every source repository that publishes here.

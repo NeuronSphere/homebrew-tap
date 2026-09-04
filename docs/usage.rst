@@ -3,28 +3,36 @@
 Using the Tap
 =============
 
-Adding the Tap
---------------
+Installing
+----------
 
-Register the NeuronSphere tap with Homebrew once:
+One command — it registers the tap and installs the tool:
 
 .. code-block:: bash
 
-    brew tap neuronsphere/tap
+    brew install neuronsphere/tap/bartleby
 
-After tapping, any formula in this repository can be installed by name.
+The ``neuronsphere/tap`` prefix is the tap path, and it is required: these
+tools are not in Homebrew core, so a bare ``brew install bartleby`` will not
+find them. Tapping first with ``brew tap neuronsphere/tap`` and then installing
+by name works too, but there is no reason to make it two steps.
 
-Available Formulae
-------------------
+macOS only
+----------
+
+Tools in this tap are distributed as `casks
+<https://docs.brew.sh/Cask-Cookbook>`_ — pre-compiled binaries — and Homebrew
+supports casks on macOS only. On Linux, download the tarball from the tool's
+GitHub Releases page or build from source; ``hmd-cli-bartleby`` publishes
+``linux/amd64`` and ``linux/arm64`` binaries with every release.
+
+Available Casks
+---------------
 
 bartleby
 ~~~~~~~~
 
 Render reStructuredText documentation using Sphinx inside Docker.
-
-.. code-block:: bash
-
-    brew install bartleby
 
 **Requirements:** Docker (or `Colima <https://github.com/abiosoft/colima>`_)
 must be running when you execute builds. Bartleby launches a container from
@@ -48,20 +56,20 @@ Upgrading
 .. code-block:: bash
 
     brew update
-    brew upgrade bartleby
+    brew upgrade --cask bartleby
 
-To check which version is installed:
+To see the installed version:
 
 .. code-block:: bash
 
-    bartleby --help
+    bartleby --version
 
 Uninstalling
 ------------
 
 .. code-block:: bash
 
-    brew uninstall bartleby
+    brew uninstall --cask bartleby
 
 To remove the tap entirely:
 
