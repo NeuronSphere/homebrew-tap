@@ -50,6 +50,33 @@ the ``hmd-tf-bartleby`` image to perform Sphinx rendering.
 See the `hmd-cli-bartleby documentation
 <https://github.com/neuronsphere/hmd-cli-bartleby>`_ for full usage details.
 
+reqtrace
+~~~~~~~~
+
+Generate and check a requirements traceability matrix from sphinx-needs
+directives and test annotations.
+
+.. code-block:: bash
+
+    brew install neuronsphere/tap/reqtrace
+
+**Requirements:** none. It needs nothing outside the Go standard library — no
+Docker, no Python — which is the point: it is licensed Apache-2.0 separately
+from ``bartleby``, so a project can adopt the requirements practice without
+adopting Bartleby or a BSL dependency.
+
+**Quick start:**
+
+.. code-block:: bash
+
+    cd /path/to/a-repo-with-requirements
+    reqtrace              # regenerate docs/requirements/traceability.rst
+    reqtrace -check       # fail on a gap or stale output; for CI
+    reqtrace -version
+
+Both tools ship from the same ``hmd-cli-bartleby`` release, so their cask
+versions move together. Installing one does not install the other.
+
 Upgrading
 ---------
 

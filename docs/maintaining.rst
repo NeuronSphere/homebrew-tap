@@ -13,6 +13,7 @@ Repository Layout
     homebrew-tap/
       Casks/
         bartleby.rb      # generated cask for the bartleby CLI
+        reqtrace.rb      # generated cask for the reqtrace tool
       docs/
         index.rst
         usage.rst
@@ -71,6 +72,22 @@ hook that clears the quarantine attribute:
 Without it, ``brew install`` succeeds and the tool dies on first run. This
 comes from ``hooks.post.install`` in the GoReleaser config. Signing and
 notarizing the binaries would remove the need for it.
+
+One Release, Several Casks
+--------------------------
+
+``hmd-cli-bartleby`` publishes two casks from a single tag: ``bartleby`` and
+``reqtrace``. Each ``homebrew_casks`` entry pins ``ids`` so it ships only its own
+binary.
+
+They are deliberately **not** one cask with two binaries. Two casks cannot both
+link the same binary name, so bundling ``reqtrace`` into ``bartleby`` would make
+installing it on its own impossible — and it exists separately precisely so a
+project can take it without taking Bartleby or its BSL licence.
+
+The cost of one tag: a cask version says which *Bartleby release* the tool came
+from, not the tool's own module version. GoReleaser's per-module tag support is
+Pro-only.
 
 Adding a New Cask
 -----------------
