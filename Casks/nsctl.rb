@@ -10,25 +10,25 @@ cask "nsctl" do
     end
   end
 
-  version "1.0.231"
+  version "1.0.232"
 
   on_macos do
     on_arm do
-      sha256 "7f40b7f7b538098721418d46e4f36e579cc45c954b0431adf0fea8185454c86e"
+      sha256 "d9d4031042a7fd18bab1b3801ea3b84b677fd14b9796b6aa6f97a25beb1e6055"
       url "https://github.com/neuronsphere/hmd-cli-neuronsphere/releases/download/#{version}/nsctl_#{version}_darwin_arm64.tar.gz"
     end
     on_intel do
-      sha256 "fad85207da9bc3848445877bea4b2518ec0fc0b02cda8216b0003405283db490"
+      sha256 "e7c5a410e45a955932d88e59f268a5773bcc3036347560767093a7b827a44156"
       url "https://github.com/neuronsphere/hmd-cli-neuronsphere/releases/download/#{version}/nsctl_#{version}_darwin_amd64.tar.gz"
     end
   end
   on_linux do
     on_arm do
-      sha256 "688237f35c1c82e817831a404b5d622377a5e030c66cdeb7d063594f32f9487f"
+      sha256 "f966e34a1a2c4ed0b20d943da8155ff603c5ae0b9b6dda30bbaa2041b77405fe"
       url "https://github.com/neuronsphere/hmd-cli-neuronsphere/releases/download/#{version}/nsctl_#{version}_linux_arm64.tar.gz"
     end
     on_intel do
-      sha256 "1679e8c6667122e72d93948ee36901bde99ab4bdfc6ac69948107c41e3ddc039"
+      sha256 "ed305c0e2d08f1c91bfa8a93627e7993dcba5e614560eaa0b119de1345692157"
       url "https://github.com/neuronsphere/hmd-cli-neuronsphere/releases/download/#{version}/nsctl_#{version}_linux_amd64.tar.gz"
     end
   end
@@ -46,12 +46,19 @@ cask "nsctl" do
   # No zap stanza required
 
   caveats <<~EOS
-    nsctl needs Docker running, and an HMD_HOME. It does not default one --
-    guessing would put its containers, volumes and network under a name no
-    other HMD tool computes -- so export it or pass --home:
+    nsctl needs Docker running. Start here:
+
+      nsctl quickstart
+
+    It runs the host checks, settles HMD_HOME -- nsctl never guesses one,
+    because a guessed home names containers and volumes no other HMD tool
+    computes -- starts your first environment, and names every command
+    before it runs it.
+
+    By hand instead:
 
       export HMD_HOME=~/hmd
-      nsctl control-plane start
+      nsctl env start
 
     If you use Colima, make sure it is running:
       colima start
