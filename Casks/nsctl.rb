@@ -10,25 +10,25 @@ cask "nsctl" do
     end
   end
 
-  version "1.0.239"
+  version "1.0.240"
 
   on_macos do
     on_arm do
-      sha256 "5d97c1f5462d96f6a5b01bb4ef6fb71422f86177b0ed8e8b8277cd6a39ce8078"
+      sha256 "b444e0f8ccbaf7ff8fabc398deb8419df268fee84d004e5a8666d4d8b194b209"
       url "https://github.com/neuronsphere/hmd-cli-neuronsphere/releases/download/#{version}/nsctl_#{version}_darwin_arm64.tar.gz"
     end
     on_intel do
-      sha256 "766471f8f3b29102b1853e67c50dfecbb88aee114ec48f6459c0448ac0a47337"
+      sha256 "08a5df49331a2966116a55ef7592d7d852aff41ac9af1400f3ab0d242f350d61"
       url "https://github.com/neuronsphere/hmd-cli-neuronsphere/releases/download/#{version}/nsctl_#{version}_darwin_amd64.tar.gz"
     end
   end
   on_linux do
     on_arm do
-      sha256 "9ffe525bfefedaf0c36c61b8a527a3304933157bb653e3b1ce1327ea1c602642"
+      sha256 "8497e1691b8622960c471fc87a22071694b3746d73a56883975d9d701741534a"
       url "https://github.com/neuronsphere/hmd-cli-neuronsphere/releases/download/#{version}/nsctl_#{version}_linux_arm64.tar.gz"
     end
     on_intel do
-      sha256 "0db91e19cab9852b6008ddc4d4468761130cdf8b3ed475dcb7dd6da1c3efa2d2"
+      sha256 "d718d614e6e70796798f6b5a4710580fc87fbece264849a10f754cb970362281"
       url "https://github.com/neuronsphere/hmd-cli-neuronsphere/releases/download/#{version}/nsctl_#{version}_linux_amd64.tar.gz"
     end
   end
