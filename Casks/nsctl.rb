@@ -10,25 +10,25 @@ cask "nsctl" do
     end
   end
 
-  version "1.0.252"
+  version "1.0.253"
 
   on_macos do
     on_arm do
-      sha256 "77f0e5cfab166c5921fbcb1a8a47e9f91fd29b0903be7d2fd627535356d2079d"
+      sha256 "03644d8ea4cc996c997929bd8749e1e2ed17af262b2e20a55e552abd58cbbc2c"
       url "https://github.com/neuronsphere/hmd-cli-neuronsphere/releases/download/#{version}/nsctl_#{version}_darwin_arm64.tar.gz"
     end
     on_intel do
-      sha256 "032a6ff0a3d4302e77b5615cab8fb28fdf5abe0a133e5c12463fa829e70be889"
+      sha256 "281d9f7534ff5839af414d67da649c68d6f5b1a140da6601708b7aa44a37e647"
       url "https://github.com/neuronsphere/hmd-cli-neuronsphere/releases/download/#{version}/nsctl_#{version}_darwin_amd64.tar.gz"
     end
   end
   on_linux do
     on_arm do
-      sha256 "0aeb1b1ec6aecf481977ca38973f35dae41ea7740b0bc84b2f7e4b2dff361760"
+      sha256 "5be4a895fd3e306d07dbc6dc16cf35e9ec719ff823a942ed68a0c566be273688"
       url "https://github.com/neuronsphere/hmd-cli-neuronsphere/releases/download/#{version}/nsctl_#{version}_linux_arm64.tar.gz"
     end
     on_intel do
-      sha256 "305ebbf48d86dac934494f035b013625cd111fa65b3934ef6a75bdaadf89e4ca"
+      sha256 "c87c4816f472c51a69e621f991b63fb61a95e0e11a1342fd817b0cb742049817"
       url "https://github.com/neuronsphere/hmd-cli-neuronsphere/releases/download/#{version}/nsctl_#{version}_linux_amd64.tar.gz"
     end
   end
@@ -43,7 +43,7 @@ cask "nsctl" do
 
   binary "nsctl"
 
-  # No zap stanza required
+  zap :not_required
 
   caveats <<~EOS
     nsctl needs Docker running. Start here:
